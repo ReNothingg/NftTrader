@@ -4,27 +4,23 @@
 
 ## Запуск всех рынков
 
-``bash
+```bash
 python .\main.py
-
-```
-
 ```
 
 Конфиг пусковой установки: `configs/snipers.json`
 
 ## Запуск одиночного рынка
 
-``bash
+```bash
 python .\portal_sniper.py
 python .\tonnel_sniper.py
 python .\mrkt_sniper.py
-
 ```
 
 Или в виде модуля:
 
-``bash
+```bash
 python -m src.services.portal.sniper
 python -m src.services.tonnel.sniper --mode mock
 python -m src.services.mrkt.sniper --mode mock
