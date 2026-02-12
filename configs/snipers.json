@@ -1,0 +1,59 @@
+{
+  "shutdown_timeout_sec": 8,
+  "markets": [
+    {
+      "name": "portal",
+      "enabled": true,
+      "command": [
+        "${PYTHON}",
+        "-m",
+        "src.services.portal.sniper"
+      ],
+      "cwd": ".",
+      "restart": true,
+      "restart_delay_sec": 2,
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "STRATEGY_FILE": "src/services/portal/config/strategy.json"
+      }
+    },
+    {
+      "name": "tonnel",
+      "enabled": true,
+      "command": [
+        "${PYTHON}",
+        "-m",
+        "src.services.tonnel.sniper",
+        "--mode",
+        "mock",
+        "--poll-interval",
+        "8"
+      ],
+      "cwd": ".",
+      "restart": true,
+      "restart_delay_sec": 2,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    {
+      "name": "mrkt",
+      "enabled": true,
+      "command": [
+        "${PYTHON}",
+        "-m",
+        "src.services.mrkt.sniper",
+        "--mode",
+        "mock",
+        "--poll-interval",
+        "8"
+      ],
+      "cwd": ".",
+      "restart": true,
+      "restart_delay_sec": 2,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  ]
+}

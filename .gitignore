@@ -1,0 +1,8 @@
+auth.txt
+.env
+__pycache__/
+*.pyc
+*.log
+*.pid
+snipers.local.json
+configs/snipers.local.json

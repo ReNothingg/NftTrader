@@ -1,0 +1,55 @@
+{
+  "global_offer": {
+    "offer_factor": 0.86,
+    "min_offer": 0.2,
+    "max_offer": 25,
+    "expiration_days": 7
+  },
+  "global_filters": {
+    "max_listing_to_floor": 1.22,
+    "min_floor": 1.0,
+    "max_floor": 40,
+    "max_ask": 60,
+    "max_total_rarity_per_mille": 6.5,
+    "skip_crafted": true
+  },
+  "rules": [
+    {
+      "name": "Lol Pop tighter",
+      "match": {
+        "collection_ids": [
+          "98850266-bb6c-43a6-9559-accedf420a02"
+        ],
+        "name_contains": [
+          "Lol Pop"
+        ]
+      },
+      "offer": {
+        "offer_factor": 0.9,
+        "expiration_days": 5
+      },
+      "filters": {
+        "max_listing_to_floor": 1.12,
+        "max_total_rarity_per_mille": 4.6
+      }
+    },
+    {
+      "name": "Snake Box flip",
+      "enabled": true,
+      "match": {
+        "name_contains": [
+          "Snake Box"
+        ]
+      },
+      "offer": {
+        "offer_factor": 0.88,
+        "max_offer": 6
+      },
+      "filters": {
+        "min_floor": 3,
+        "max_floor": 10,
+        "max_listing_to_floor": 1.1
+      }
+    }
+  ]
+}
