@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-"""Launcher for running multiple market snipers in parallel."""
-
 from __future__ import annotations
 
 import argparse
@@ -27,26 +24,13 @@ DEFAULT_CONFIG: Dict[str, Any] = {
             "cwd": ".",
             "restart": True,
             "restart_delay_sec": 2,
-            "env": {"PYTHONUNBUFFERED": "1"},
-        },
-        {
-            "name": "tonnel",
-            "enabled": True,
-            "command": ["${PYTHON}", "-m", "src.services.tonnel.sniper", "--mode", "mock"],
-            "cwd": ".",
-            "restart": True,
-            "restart_delay_sec": 2,
-            "env": {"PYTHONUNBUFFERED": "1"},
-        },
-        {
-            "name": "mrkt",
-            "enabled": True,
-            "command": ["${PYTHON}", "-m", "src.services.mrkt.sniper", "--mode", "mock"],
-            "cwd": ".",
-            "restart": True,
-            "restart_delay_sec": 2,
-            "env": {"PYTHONUNBUFFERED": "1"},
-        },
+            "env": {
+                "PYTHONUNBUFFERED": "1",
+                "STRATEGY_FILE": "src/services/portal/config/strategy.json",
+                "PORTAL_ACCOUNTS_FILE": "configs/portal_accounts.json",
+                "STATE_DB_PATH": "data/portal_trader.db",
+            },
+        }
     ],
 }
 
@@ -63,9 +47,16 @@ class MarketSpec:
 
 
 class ManagedProcess:
-    def __init__(self, project_root: Path, spec: MarketSpec) -> None:
+    def __init__(
+        self,
+        project_root: Path,
+        spec: MarketSpec,
+        *,
+        base_env: Optional[Dict[str, str]] = None,
+    ) -> None:
         self.project_root = project_root
         self.spec = spec
+        self.base_env = dict(base_env or {})
         self.process: Optional[subprocess.Popen[str]] = None
         self._output_thread: Optional[threading.Thread] = None
         self.next_restart_at = 0.0
@@ -76,6 +67,7 @@ class ManagedProcess:
 
         command = [expand_token(token, self.project_root) for token in self.spec.command]
         env = os.environ.copy()
+        env.update(self.base_env)
         env.update(self.spec.env)
         env.setdefault("PYTHONUNBUFFERED", "1")
         env.setdefault("PROJECT_ROOT", str(self.project_root))
@@ -157,6 +149,32 @@ def write_default_config(path: Path) -> None:
         f.write("\n")
 
 
+def load_dotenv(path: Path) -> Dict[str, str]:
+    if not path.exists():
+        return {}
+
+    env: Dict[str, str] = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[7:].strip()
+        if "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        if not key:
+            continue
+
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+            value = value[1:-1]
+        env[key] = value
+    return env
+
+
 def load_specs(config_path: Path, project_root: Path) -> tuple[List[MarketSpec], float]:
     if not config_path.exists():
         write_default_config(config_path)
@@ -223,8 +241,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
-    args = parse_args()
     project_root = Path(__file__).resolve().parents[2]
+    dotenv_env = load_dotenv(project_root / ".env")
+    if dotenv_env:
+        log("launcher", f"loaded .env vars: {len(dotenv_env)}")
+
+    args = parse_args()
     config_path = (project_root / args.config).resolve()
 
     try:
@@ -234,7 +256,7 @@ def main() -> int:
         return 1
 
     managed: List[ManagedProcess] = [
-        ManagedProcess(project_root, spec) for spec in specs if spec.enabled
+        ManagedProcess(project_root, spec, base_env=dotenv_env) for spec in specs if spec.enabled
     ]
     if not managed:
         log("launcher", "no enabled markets in config")

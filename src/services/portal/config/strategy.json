@@ -1,55 +1,146 @@
 {
-  "global_offer": {
-    "offer_factor": 0.86,
-    "min_offer": 0.2,
-    "max_offer": 25,
-    "expiration_days": 7
+  "api": {
+    "base": "https://portal-market.com/api"
   },
-  "global_filters": {
-    "max_listing_to_floor": 1.22,
-    "min_floor": 1.0,
-    "max_floor": 40,
-    "max_ask": 60,
-    "max_total_rarity_per_mille": 6.5,
-    "skip_crafted": true
+  "runtime": {
+    "dry_run": true,
+    "idle_poll_interval": 0.9,
+    "hot_poll_interval": 0.2,
+    "hot_cycles": 8,
+    "request_timeout": 6.0,
+    "search_limit": 80,
+    "warm_start": true,
+    "seen_cache_size": 12000,
+    "seen_break_streak": 2,
+    "max_new_per_cycle": 50,
+    "max_offers_per_cycle": 8,
+    "activity_poll_every_sec": 20,
+    "inventory_poll_every_sec": 15,
+    "orders_poll_every_sec": 12,
+    "listings_poll_every_sec": 12
   },
-  "rules": [
+  "liquidity": {
+    "enabled": true,
+    "min_recent_sales": 2,
+    "min_sell_through": 0.02,
+    "max_floor_to_last_sale": 1.8
+  },
+  "telegram": {
+    "enabled": true,
+    "token": "",
+    "chat_ids": []
+  },
+  "offer_rules": [
     {
-      "name": "Lol Pop tighter",
+      "name": "personal-offers-model-bg",
+      "enabled": true,
       "match": {
         "collection_ids": [
           "98850266-bb6c-43a6-9559-accedf420a02"
         ],
-        "name_contains": [
+        "gift_names": [
           "Lol Pop"
+        ],
+        "models": [
+          "Classic"
+        ],
+        "backgrounds": [
+          "Blue"
         ]
       },
-      "offer": {
-        "offer_factor": 0.9,
-        "expiration_days": 5
-      },
-      "filters": {
-        "max_listing_to_floor": 1.12,
-        "max_total_rarity_per_mille": 4.6
-      }
+      "offer_factor": 0.86,
+      "min_discount_pct": 20,
+      "max_discount_pct": 30,
+      "min_offer": 0.25,
+      "max_offer": 25,
+      "min_floor": 1.2,
+      "max_floor": 45,
+      "max_listing_to_floor": 1.2,
+      "outbid_step": 0.01,
+      "bump_if_outbid": true,
+      "expiration_days": 7,
+      "expiration_seconds": 0,
+      "skip_crafted": true,
+      "max_actions_per_cycle": 4
     },
     {
-      "name": "Snake Box flip",
+      "name": "recent-rare-selective",
       "enabled": true,
       "match": {
-        "name_contains": [
-          "Snake Box"
+        "gift_names": [
+          "Snake Box",
+          "Moon Bird"
+        ],
+        "models": [
+          "Gold",
+          "Legendary"
+        ],
+        "only_recent_seconds": 120
+      },
+      "offer_factor": 0.84,
+      "min_discount_pct": 18,
+      "max_discount_pct": 32,
+      "min_offer": 0.2,
+      "max_offer": 18,
+      "max_listing_to_floor": 1.15,
+      "outbid_step": 0.01,
+      "bump_if_outbid": true,
+      "expiration_days": 5,
+      "skip_crafted": true
+    }
+  ],
+  "order_rules": [
+    {
+      "name": "standing-order-bundle-builder",
+      "enabled": true,
+      "mode": "order",
+      "match": {
+        "collection_ids": [
+          "98850266-bb6c-43a6-9559-accedf420a02"
+        ],
+        "models": [
+          "Classic"
         ]
       },
-      "offer": {
-        "offer_factor": 0.88,
-        "max_offer": 6
+      "offer_factor": 0.83,
+      "min_discount_pct": 20,
+      "max_discount_pct": 30,
+      "min_offer": 0.2,
+      "max_offer": 12,
+      "min_floor": 1.0,
+      "max_floor": 20,
+      "outbid_step": 0.01,
+      "bump_if_outbid": true,
+      "expiration_days": 7,
+      "expiration_seconds": 0
+    }
+  ],
+  "sell_rules": [
+    {
+      "name": "autosell-by-model-bg",
+      "enabled": true,
+      "match": {
+        "collection_ids": [
+          "98850266-bb6c-43a6-9559-accedf420a02"
+        ],
+        "models": [
+          "Classic",
+          "Gold"
+        ],
+        "backgrounds": [
+          "Blue",
+          "Red",
+          "Neon"
+        ]
       },
-      "filters": {
-        "min_floor": 3,
-        "max_floor": 10,
-        "max_listing_to_floor": 1.1
-      }
+      "markup_pct": 6,
+      "min_sell_price": 0.5,
+      "max_sell_price": 80,
+      "floor_undercut_step": 0.01,
+      "auto_reprice_below_floor": true,
+      "reprice_step": 0.01,
+      "expiration_days": 7,
+      "expiration_seconds": 0
     }
   ]
 }

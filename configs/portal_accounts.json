@@ -1,0 +1,12 @@
+{
+  "accounts": [
+    {
+      "name": "main",
+      "auth_env": "PORTAL_AUTH"
+    },
+    {
+      "name": "alt_1",
+      "auth_env": "PORTAL_AUTH_ALT_1"
+    }
+  ]
+}

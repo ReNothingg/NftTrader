@@ -14,45 +14,9 @@
       "restart_delay_sec": 2,
       "env": {
         "PYTHONUNBUFFERED": "1",
-        "STRATEGY_FILE": "src/services/portal/config/strategy.json"
-      }
-    },
-    {
-      "name": "tonnel",
-      "enabled": true,
-      "command": [
-        "${PYTHON}",
-        "-m",
-        "src.services.tonnel.sniper",
-        "--mode",
-        "mock",
-        "--poll-interval",
-        "8"
-      ],
-      "cwd": ".",
-      "restart": true,
-      "restart_delay_sec": 2,
-      "env": {
-        "PYTHONUNBUFFERED": "1"
-      }
-    },
-    {
-      "name": "mrkt",
-      "enabled": true,
-      "command": [
-        "${PYTHON}",
-        "-m",
-        "src.services.mrkt.sniper",
-        "--mode",
-        "mock",
-        "--poll-interval",
-        "8"
-      ],
-      "cwd": ".",
-      "restart": true,
-      "restart_delay_sec": 2,
-      "env": {
-        "PYTHONUNBUFFERED": "1"
+        "STRATEGY_FILE": "src/services/portal/config/strategy.json",
+        "PORTAL_ACCOUNTS_FILE": "configs/portal_accounts.json",
+        "STATE_DB_PATH": "data/portal_trader.db"
       }
     }
   ]
